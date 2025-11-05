@@ -9,9 +9,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(ENABLE_DEBUG_FLAGS "Enable extra debug compile options" OFF)
 
 # user paths to htslib if needed
-set(HTSLIB_ROOT "" CACHE PATH "optional root/prefix of htslib (contains include/ and lib/)")
-set(HTSLIB_INCLUDE_DIR "" CACHE PATH "optional path to directory that contains htslib/hts.h")
-set(HTSLIB_STATIC_LIBA "" CACHE FILEPATH "optional path to libhts.a")
+set(HTSLIB_ROOT "" CACHE PATH "Root/prefix of htslib (contains include/ and lib/)")
+set(HTSLIB_INCLUDE_DIR "" CACHE PATH "Path to directory that contains htslib/hts.h")
+set(HTSLIB_LIBRARY "" CACHE FILEPATH "Absolute path to libhts.{so,dylib,a}")
 
 add_executable(pileup-events
   src/main.cpp
@@ -44,11 +44,12 @@ set(_htslib_lib "")
 if(HTSLIB_INCLUDE_DIR)
   set(_htslib_inc "${HTSLIB_INCLUDE_DIR}")
 endif()
-if(HTSLIB_STATIC_LIrAr
-  setoptional (_optional htslib_lib "${HTSLIB_STATICoptional _afp
+if(HTSLIB_LIBRARY)
+  set(_htslib_lib "${HTSLIB_LIBRARY}")
+endif()
 
-if(NOT HTSLIB_TARGET AND p
-p assuming the pkg-config module is called "htslib"
+if(NOT HTSLIB_TARGET AND PkgConfig_FOUND)
+  # assuming the pkg-config module is called "htslib"
   pkg_check_modules(HTSLIB QUIET IMPORTED_TARGET htslib)
   if(HTSLIB_FOUND)
     set(HTSLIB_TARGET PkgConfig::HTSLIB)
@@ -74,7 +75,7 @@ if(NOT HTSLIB_TARGET)
 endif()
 
 if(NOT HTSLIB_TARGET AND _htslib_inc AND _htslib_lib)
-  add_library(htslib STATIC IMPORTED GLOBAL)
+  add_library(htslib UNKNOWN IMPORTED GLOBAL)
   add_library(htslib::htslib ALIAS htslib)
   set_target_properties(htslib PROPERTIES
     IMPORTED_LOCATION "${_htslib_lib}"
@@ -86,12 +87,13 @@ endif()
 if(NOT HTSLIB_TARGET)
   message(FATAL_ERROR
     "Could not find htslib directly or via pkg-config. "
-    "Set HTSLIB_ROOT or both HTSLIB_INCLUDE_DIR and HTSLIB_STATIC_LIBA."
-  )rendif()
-# --- a
+    "Set HTSLIB_ROOT or both HTSLIB_INCLUDE_DIR and HTSLIB_LIBRARY."
+  )
+endif()
+# --- end deps ---
 
-target_compile_options(optional pevents PRIVATE
-    optional optional -Wall
+target_compile_options(pileup-events PRIVATE
+    -Wall
     -Wextra
     -Wpedantic
     -Wshadow
