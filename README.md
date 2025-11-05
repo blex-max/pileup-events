@@ -27,12 +27,12 @@ create the pileup-events binary:
   cmake --build .  # create binary
 ```
 
-You can invoke the binary like `./path/to/pileup-events --help`.
+You can then invoke the binary like `./path/to/pileup-events --help`.
 Add the binary path to PATH to be able to call `pileup-events` from anywhere.
 
 ## Usage
 
-See `./pileup-events --help`.
+See `pileup-events --help`.
 Then pick a location to investigate,
 for example a variant from a VCF or a region from a BED file,
 and run on that location to see the event counts.
@@ -44,8 +44,9 @@ e.g.:
 ```
 
 The region string is 1-indexed, end-inclusive, i.e. identical to `samtools view`.
-Both .bam and .cram are in principle supported,
-though no testing on cram has been done as yet.
+Assuming compilation against a recent version of htslib, b
+both .bam and .cram are in principle supported.
+No testing on cram has been done as of yet.
 
 # Acknowledgements
 
