@@ -8,23 +8,19 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(ENABLE_DEBUG_FLAGS "Enable extra debug compile options" OFF)
 
-# direct paths to deps
+# user paths to deps
 set(CXXOPTS_ROOT "" CACHE PATH "Root of cxxopts (contains include/ or cxxopts.hpp)")
 set(CXXOPTS_INCLUDE_DIR "" CACHE PATH "Path to directory that contains cxxopts.hpp")
 set(HTSLIB_ROOT "" CACHE PATH "Root/prefix of htslib (contains include/ and lib/)")
 set(HTSLIB_INCLUDE_DIR "" CACHE PATH "Path to directory that contains htslib/hts.h")
 set(HTSLIB_LIBRARY "" CACHE FILEPATH "Full path to libhts.{so,dylib,a}")
 
-
-
 add_executable(pileup-events
   src/main.cpp
 )
 
-# --- Dependencies: prefer pkg-config, otherwise search common macOS/Linux prefixes ---
 find_package(PkgConfig QUIET)
 
-# Common prefixes (Linux, macOS Intel/Apple Silicon, MacPorts)
 set(_COMMON_HINT_PREFIXES
   /usr /usr/local /opt/local /opt/homebrew
 )
@@ -33,7 +29,6 @@ set(_COMMON_HINT_PREFIXES
 set(CXXOPTS_TARGET "")
 set(_cxxopts_inc "")
 
-# try user, then pkg-config, then general
 if(CXXOPTS_INCLUDE_DIR)
   set(_cxxopts_inc "${CXXOPTS_INCLUDE_DIR}")
 else()
@@ -43,28 +38,32 @@ else()
       set(CXXOPTS_TARGET PkgConfig::CXXOPTS)
     endif()
   endif()
-  find_path(_cxxopts_inc
-    NAMES cxxopts.hpp
-    HINTS ${CXXOPTS_ROOT} ${_COMMON_HINT_PREFIXES}
-    PATH_SUFFIXES include
-  )
+
+  if(NOT CXXOPTS_TARGET)
+    find_path(_cxxopts_inc
+      NAMES cxxopts.hpp
+      HINTS ${CXXOPTS_ROOT} ${_COMMON_HINT_PREFIXES}
+      PATH_SUFFIXES include
+    )
+  endif()
 endif()
 
 if (NOT CXXOPTS_TARGET)
-  add_library(cxxopts INTERFACE)
-  add_library(cxxopts::cxxopts ALIAS cxxopts)
-  target_include_directories(cxxopts INTERFACE "${_cxxopts_inc}")
-  set(CXXOPTS_TARGET cxxopts::cxxopts)
+  if (_cxxopts_inc AND NOT _cxxopts_inc MATCHES "-NOTFOUND")
+    add_library(cxxopts INTERFACE)
+    add_library(cxxopts::cxxopts ALIAS cxxopts)
+    target_include_directories(cxxopts INTERFACE "${_cxxopts_inc}")
+    set(CXXOPTS_TARGET cxxopts::cxxopts)
+  endif()
 endif()
 
 if(NOT CXXOPTS_TARGET)
-  message(FATAL_ERROR "Could not find cxxopts directly or via pkg-config. Set CXXOPTS_ROOT or CXXOPTS_INCLUDE_DIR.")
+  message(FATAL_ERROR
+    "Could not find cxxopts directly or via pkg-config. "
+    "Set CXXOPTS_ROOT or CXXOPTS_INCLUDE_DIR.")
 endif()
 
-
 # ---------------- htslib (library + headers) ----------------
-# --- htslib discovery (user -> pkg-config -> general) ---
-
 set(HTSLIB_TARGET "")
 set(_htslib_inc "")
 set(_htslib_lib "")
