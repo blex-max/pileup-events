@@ -28,7 +28,7 @@ create the pileup-events binary:
 ```
 
 You can invoke the binary like `./path/to/pileup-events --help`.
-Add the binary path to PATH to be able to do `pileup-events` from anywhere.
+Add the binary path to PATH to be able to call `pileup-events` from anywhere.
 
 ## Usage
 
