@@ -8,7 +8,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(ENABLE_DEBUG_FLAGS "Enable extra debug compile options" OFF)
 
-# user paths to deps
+# user paths to htslib if needed
 set(HTSLIB_ROOT "" CACHE PATH "Root/prefix of htslib (contains include/ and lib/)")
 set(HTSLIB_INCLUDE_DIR "" CACHE PATH "Path to directory that contains htslib/hts.h")
 set(HTSLIB_LIBRARY "" CACHE FILEPATH "Full path to libhts.{so,dylib,a}")
@@ -27,14 +27,12 @@ set(_COMMON_HINT_PREFIXES
 # download directly since light, header only
 include(FetchContent)
 
-# Always fetch a known version of cxxopts
 FetchContent_Declare(
   cxxopts
   GIT_REPOSITORY https://github.com/jarro2783/cxxopts.git
-  GIT_TAG        v3.3.1   # change version here if needed
+  GIT_TAG        v3.3.1  # what I developed against, but any 3.x.x should be fine
 )
 
-# Download and add to the build
 FetchContent_MakeAvailable(cxxopts)
 
 # ------- htslib -------
