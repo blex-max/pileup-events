@@ -64,9 +64,6 @@ inline void count (htsFile *aln_fh,
     sso_plp_pos.msg = "error translating htslib pileup position into "
                       "appropriate index for results array";
 
-    // int64_t maxNM = (maxmismatches != -1) ? maxmismatches :
-    // INT64_MAX; unsigned long long no_NM_count = 0;
-
     // fetch a read overlapping the query region;
     // then do a pileup per base for the total region
     // covered by the retrieved read;
