@@ -134,7 +134,7 @@ int main (int argc,
     try {
         cxxopts::Options options (
             "pileup-events",
-            "standalone implementation of bam2R"
+            "Get per-position genomic event counts"
             "\n\n"
             "Where reference names contain colons, surround in"
             "\n"
