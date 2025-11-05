@@ -19,19 +19,8 @@ constexpr std::string_view HEADER =
     "A,T,C,G,-,N,INS,DEL,HEAD,TAIL,QUAL,a,t,c,g,_,n,ins,del,head,"
     "tail,qual";
 
-// static inline int64_t getNM (const bam1_t *b,
-//                              unsigned long long &count) {
-//     const uint8_t *nm = bam_aux_get (b, "NM");
-//     if (nm)
-//         return bam_aux2i (nm);
-//     else {
-//         count++;
-//         return 0; // Dummy NM value that always passes the filter
-//     }
-// }
-
-
 // nothing but C please
+extern "C" {
 struct pf_capture {
     htsFile *fh;
     hts_itr_t *it;
@@ -54,6 +43,7 @@ int pileup_func (void *data,
     }
     return ret;
 };
+}
 // end nothing but C
 
 // bam2R
@@ -70,9 +60,6 @@ inline void count (htsFile *aln_fh,
     bam_hdr_t *head = NULL;
     AlleleEventCounter aev (params, counts);
 
-    std::cerr << "reg start: " << std::to_string (reg.start)
-              << std::endl;
-    std::cerr << "reg end: " << std::to_string (reg.end) << std::endl;
     safe_size_opts sso_plp_pos;
     sso_plp_pos.msg = "error translating htslib pileup position into "
                       "appropriate index for results array";
@@ -99,29 +86,24 @@ inline void count (htsFile *aln_fh,
     size_t pos_offset;
     while ((pl = bam_plp64_auto (buf, &plp_tid, &plp_pos, &n_plp)) !=
            0) {
-        std::cerr << "plp_pos: " << std::to_string (plp_pos)
-                  << std::endl;
+        // std::cerr << "plp_pos: " << std::to_string (plp_pos)
+        //           << std::endl;
         if (n_plp < 0 || plp_tid < 0 || plp_pos < 0) {
             throw std::runtime_error ("pileup failed");
         }
         if (!(plp_pos >= reg.start && plp_pos < reg.end)) {
-            std::cerr << "skipping" << std::endl;
+            // std::cerr << "skipping" << std::endl;
             continue;
         }
         pos_offset = safe_size (plp_pos - reg.start, sso_plp_pos);
-        std::cerr << "counting plp_pos: " << std::to_string (plp_pos)
-                  << " to offset start: "
-                  << std::to_string (pos_offset) << std::endl;
-        std::cerr << "n_plp: " << std::to_string (n_plp) << std::endl;
+        // std::cerr << "counting plp_pos: " << std::to_string
+        // (plp_pos)
+        //           << " to offset start: "
+        //           << std::to_string (pos_offset) << std::endl;
+        // std::cerr << "n_plp: " << std::to_string (n_plp) <<
+        // std::endl;
         aev.count_pileup (pl, pos_offset, safe_size (n_plp));
     }
-
-    // if (maxmismatches != -1 && no_NM_count > 0) {
-    //     printf ("%llu reads did not have NM tags; max.mismatches "
-    //             "filter was not "
-    //             "applied to them.\n",
-    //             no_NM_count);
-    // }
 
     sam_itr_destroy (iter);
     bam_destroy1 (b);
@@ -141,6 +123,7 @@ int main (int argc,
     hts_region reg;
     count_params cp;
     bool print_head = false;
+    bool print_row = false;
 
     // defaults
     cp.min_mapq = 25;
@@ -153,7 +136,7 @@ int main (int argc,
 
     try {
         cxxopts::Options options (
-            "count-alleles",
+            "pileup-events",
             "standalone implementation of bam2R"
             "\n\n"
             "Where reference names contain colons, surround in"
@@ -165,14 +148,18 @@ int main (int argc,
             "\n"
             "chr1:100-100. chr1:-100 is shorthand for chr1:1-100"
             "\n"
-            "and chr1:100- is ch1:100-<end>."
+            "and chr1:100- is ch1:100-<end>. All co-ordinates are"
+            "\n"
+            "1-based, end-inclusive; i.e. as reported in a VCF."
             "\n\n"
 
             "A result matrix with end-start rows and 22 columns"
             "\n"
             "of event counters (see --head) is printed to stdout"
             "\n"
-            "as a csv. Logging is printed to stderr."
+            "as a csv. The first 11 columns represent events on"
+            "\n"
+            "the forward strand, the next 11 the reverse."
             "\n");
 
         // clang-format off
@@ -198,6 +185,7 @@ int main (int argc,
              cxxopts::value<int>())
 
             ("head", "Print header")
+            ("row", "Print genomic position index for each row")
             ("h,help", "Print usage");
         // clang-format on
 
@@ -243,6 +231,9 @@ int main (int argc,
         if (parsed_args.count ("head")) {
             print_head = true;
         }
+        if (parsed_args.count ("row")) {
+            print_row = true;
+        }
 
     } catch (const std::exception &e) {
         std::cerr << "Error parsing CLI options: " << e.what()
@@ -283,7 +274,9 @@ int main (int argc,
                 "parse failed for input region " + region_str +
                 " - " + msg);
         }
-        // bam2R did start-1 and I don't know why
+        // converts to 0-indexed internal postions from 1-indexed
+        // region str
+        // NOTE: bam2R did start-1 and I don't know why
         reg = hts_region::by_end (tid, start, end);
 
         idx = sam_index_load (aln_in, aln_path.c_str());
@@ -296,10 +289,10 @@ int main (int argc,
             "error in calculating cells needed for storing result";
         size_t n_cells = safe_size (
             static_cast<int64_t> (reg.rlen * N_FIELDS_PER_OBS));
-        std::cerr << "region length: " << std::to_string (reg.rlen)
-                  << std::endl;
-        std::cerr << "n_cells: " << std::to_string (n_cells)
-                  << std::endl;
+        // std::cerr << "region length: " << std::to_string (reg.rlen)
+        //           << std::endl;
+        // std::cerr << "n_cells: " << std::to_string (n_cells)
+        //           << std::endl;
         result.resize (n_cells, 0);
 
     } catch (std::exception &e) {
@@ -316,10 +309,18 @@ int main (int argc,
     }
 
     try {
-        if (print_head)
+        if (print_head) {
+            if (print_row)
+                std::cout << "pos,";
             std::cout << HEADER << "\n";
+        }
         size_t i = 0;
+        size_t row_counter = 1; // add 1 for 1-indexed row, per VCF
         while (i < result.size()) {
+            if (print_row)
+                std::cout
+                    << static_cast<uint64_t> (reg.start) + row_counter
+                    << ",";
             size_t j = 0;
             while (j < (N_FIELDS_PER_OBS - 1)) {
                 std::cout << result[i + j] << ",";
@@ -327,6 +328,7 @@ int main (int argc,
             }
             std::cout << result[i + j] << "\n";
             i += N_FIELDS_PER_OBS;
+            ++row_counter;
         }
     } catch (std::exception &e) {
         std::cerr << "Error during write: " << e.what() << std::endl;

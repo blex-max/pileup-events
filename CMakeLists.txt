@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(count-alleles CXX)
+project(pileup-events CXX)
 
 option(ENABLE_DEBUG_FLAGS "Enable extra debug compile options" OFF)
 
@@ -13,11 +13,11 @@ pkg_check_modules(HTSLIB REQUIRED IMPORTED_TARGET htslib)
 pkg_check_modules(CXXOPTS REQUIRED IMPORTED_TARGET cxxopts)
 # pkg_check_modules(CATCH REQUIRED catch2-with-main>=3.9)
 
-add_executable(count-alleles
+add_executable(pileup-events
   src/main.cpp
 )
 
-target_compile_options(count-alleles PRIVATE
+target_compile_options(pileup-events PRIVATE
     -Wall
     -Wextra
     -Wpedantic
@@ -34,23 +34,23 @@ target_compile_options(count-alleles PRIVATE
 )
 
 if(ENABLE_DEBUG_FLAGS)
-  target_compile_options(count-alleles PRIVATE
+  target_compile_options(pileup-events PRIVATE
     -fsanitize=address,undefined
     -fno-omit-frame-pointer
     -O0 -g
   )
-  target_link_options(count-alleles PRIVATE
+  target_link_options(pileup-events PRIVATE
     -fsanitize=address,undefined
   )
 endif()
 
-target_include_directories(count-alleles PRIVATE
+target_include_directories(pileup-events PRIVATE
   src
   PkgConfig::CXXOPTS
   PkgConfig::HTSLIB
 )
 
-target_link_libraries(count-alleles PRIVATE
+target_link_libraries(pileup-events PRIVATE
   PkgConfig::CXXOPTS
   PkgConfig::HTSLIB
 )
