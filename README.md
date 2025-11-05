@@ -5,7 +5,7 @@
 You will need cxxopts and htslib installed,
 and preferably pkgconfig.
 Any standard install method should work for
-these dependecies, e.g. brew, apt.  
+these dependecies, e.g. `brew`, `apt`.  
 
 To create the pileup-events binary:
 ```
