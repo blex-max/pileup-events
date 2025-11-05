@@ -151,7 +151,7 @@ int main (int argc,
             "\n"
             "  Where reference names contain colons, surround in     |"
             "\n"
-            "  curly braces like {HLA-DRB1*12:17}:<start>-<end>.     |"
+            "  curly braces like {HLA-DRB1*12:17}:<start>{-<end>}.   |"
             "\n"
             "                                                        |"
             "\n"
