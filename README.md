@@ -48,7 +48,9 @@ Assuming compilation against a recent version of htslib, b
 both .bam and .cram are in principle supported.
 No testing on cram has been done as of yet.
 
-## Acknowledgements
+## Authors & Acknowledgements
+
+`pileup-events` is the work of Alex Byrne & Luca Barbon of CASM Informatics, Wellcome Sanger Institute.
 
 This tool uses [htslib](https://github.com/samtools/htslib) by the samtools team, and [cxxopts](https://github.com/jarro2783/cxxopts) by Jarryd Beck & contributors.
 
