@@ -1,35 +1,14 @@
 #pragma once
 
 #include <cstdint>
+#include <htslib/sam.h>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 #include "bounds.hpp"
-#include "htslib/sam.h"
-
 #include "const.hpp"
 #include "structs.hpp"
-
-// TODO: use the 4 additional bits in the base value for the SET flag
-inline constexpr uint8_t FLAG_UNSET = 0;
-inline constexpr uint8_t FLAG_POS_FAIL = (1 << 0); // Position fail
-inline constexpr uint8_t FLAG_QUAL_FAIL = (1 << 1); // Quality fail
-inline constexpr uint8_t FLAG_REV = (1 << 2); // Reverse orientation
-inline constexpr uint8_t FLAG_FDEL =
-    (1 << 3); // Followed by a deletion
-inline constexpr uint8_t FLAG_FINS =
-    (1 << 4); // Followed by an insertion
-inline constexpr uint8_t FLAG_HEAD = (1 << 5); // Head
-inline constexpr uint8_t FLAG_TAIL = (1 << 6); // Tail
-inline constexpr uint8_t FLAG_IS_DEL = (1 << 7); // Is a deleted base
-
-// htslib 4-bit-encoding values
-inline constexpr uint8_t base_to_count_field[16] = {
-    FIELD_N, FIELD_A, FIELD_C, FIELD_N, FIELD_G, FIELD_N,
-    FIELD_N, FIELD_N, FIELD_T, FIELD_N, FIELD_N, FIELD_N,
-    FIELD_N, FIELD_N, FIELD_N, FIELD_N};
-
 
 // cleave tie to bam pointer
 struct PileupReadInfo {
@@ -64,6 +43,18 @@ struct PileupReadInfo {
     }
 };
 
+// identify events
+inline constexpr uint8_t FLAG_UNSET = 0;
+inline constexpr uint8_t FLAG_POS_FAIL = (1 << 0); // Position fail
+inline constexpr uint8_t FLAG_QUAL_FAIL = (1 << 1); // Quality fail
+inline constexpr uint8_t FLAG_REV = (1 << 2); // Reverse orientation
+inline constexpr uint8_t FLAG_FDEL =
+    (1 << 3); // Followed by a deletion
+inline constexpr uint8_t FLAG_FINS =
+    (1 << 4); // Followed by an insertion
+inline constexpr uint8_t FLAG_HEAD = (1 << 5); // Head
+inline constexpr uint8_t FLAG_TAIL = (1 << 6); // Tail
+inline constexpr uint8_t FLAG_IS_DEL = (1 << 7); // Is a deleted base
 inline uint8_t get_pileup_flag (const count_params &params,
                                 const PileupReadInfo &p) {
     /* LOOKUP TABLES */
@@ -191,6 +182,12 @@ class AlleleEventCounter {
 
     void _score_single (const BaseInfo b,
                         const size_t pos_offset) {
+        // htslib 4-bit-encoding values
+        constexpr uint8_t base_to_count_field[16] = {
+            FIELD_N, FIELD_A, FIELD_C, FIELD_N, FIELD_G, FIELD_N,
+            FIELD_N, FIELD_N, FIELD_T, FIELD_N, FIELD_N, FIELD_N,
+            FIELD_N, FIELD_N, FIELD_N, FIELD_N};
+
         // field accessor that compiler should inline
         constexpr auto make_idx = [] (const size_t block_offset) {
             return [block_offset] (const size_t field) -> size_t {
@@ -223,8 +220,9 @@ class AlleleEventCounter {
 
                 // NOTE: what about multi-base deletions (is_del
                 // follwed by negative indel?)?
-                counts[field (FIELD_FDEL)] +=
-                    (b.flag & FLAG_FDEL) != 0;
+                counts[field (FIELD_FDEL)] += (b.flag & FLAG_FDEL) !=
+                    0; // NOTE: these are called DEL and INS in the
+                       // header per bam2R, which is very misleading
                 counts[field (FIELD_FINS)] +=
                     (b.flag & FLAG_FINS) != 0;
             }
@@ -238,23 +236,20 @@ class AlleleEventCounter {
     void _score_pair (const BasePairInfo &bp,
                       size_t pos_offset,
                       int &pair_toggle) {
-        // NOTE: the first item is ALWAYS set, because they are set in
-        // order of appearence
         const BaseInfo &a = bp.baseinfo[0];
         const BaseInfo &b = bp.baseinfo[1];
 
         // if bases different and b is defined
         // count both bases toggling between
         // first and second bases
-        bool bundef = (b.base == UNDEFINED_VALUE);
-        bool bases_differ = (b.base != a.base);
-
-        if (bundef) {
+        if (b.base == UNDEFINED_VALUE) {
             _score_single (a, pos_offset);
             return;
         }
 
-        if (bases_differ) {
+        // NOTE: the first item is ALWAYS set, because they are set in
+        // order of appearance
+        if (b.base != a.base) {
             _score_single (a, pos_offset);
             _score_single (b, pos_offset);
             return;
@@ -271,6 +266,7 @@ class AlleleEventCounter {
             for (size_t i = 0; i < n_reads; ++i) {
                 const bam_pileup1_t htspile = *(pileups_ptr + i);
                 BaseInfo b;
+                // TODO: wasteful intermediate conversion
                 b.from_pinfo (PileupReadInfo::from_pileup (htspile),
                               params);
                 _score_single (b, pos_block_offset);
@@ -287,9 +283,7 @@ class AlleleEventCounter {
             // Count
             int toggle = 0;
             for (auto &[qname, bpair] : qname_map) {
-                _score_pair (
-                    bpair, pos_block_offset,
-                    toggle);
+                _score_pair (bpair, pos_block_offset, toggle);
             }
         }
     }

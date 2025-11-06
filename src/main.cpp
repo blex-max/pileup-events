@@ -33,7 +33,8 @@ int pileup_func (void *data,
             break; // EOF/err
         }
         if (!(b->core.flag & d->p->exclude_flag) &&
-            ((b->core.flag & d->p->include_flag) == d->p->include_flag) &&
+            ((b->core.flag & d->p->include_flag) ==
+             d->p->include_flag) &&
             b->core.qual >= d->p->min_mapq) {
             break; // found good read
         };
@@ -48,8 +49,7 @@ inline void count (htsFile *aln_fh,
                    hts_idx_t *aln_idx,
                    AlleleEventCounter ctr,
                    const hts_region reg,
-                   const count_params params
-) {
+                   const count_params params) {
     bam_plp_t buf = NULL;
     bam1_t *b = NULL;
     bam_hdr_t *head = NULL;
@@ -94,6 +94,8 @@ inline void count (htsFile *aln_fh,
 }
 
 
+// NOTE: does not at present include the max_mismatches functionality
+// added to recent versions of deepsnv
 int main (int argc,
           char *argv[]) {
     namespace fs = std::filesystem;

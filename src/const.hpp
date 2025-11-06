@@ -29,8 +29,8 @@ inline constexpr size_t RSTRAND_OFFSET = N_FIELDS_PER_STRAND;
 
 inline constexpr uint8_t UNDEFINED_VALUE = UINT8_MAX;
 
-constexpr std::string_view VERSION = "0.0.0";
-constexpr std::string_view HEADER =
+inline constexpr std::string_view VERSION = "0.0.0";
+inline constexpr std::string_view HEADER =
     "A,T,C,G,-,N,INS,DEL,HEAD,TAIL,QUAL,NREAD,a,t,c,g,_,n,ins,del,head,"
     "tail,qual,nread";
 
