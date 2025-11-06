@@ -16,11 +16,8 @@ add_executable(pileup-events
   src/main.cpp
 )
 
+# //----- find deps ---//
 find_package(PkgConfig QUIET)
-
-set(_COMMON_HINT_PREFIXES
-  /usr /usr/local /opt/local /opt/homebrew
-)
 
 # ------- cxxopts -------
 # download directly since light, header only
@@ -35,7 +32,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(cxxopts)
 
 # ------- htslib -------
-# use system
 set(HTSLIB_TARGET "")
 set(_htslib_inc "")
 set(_htslib_lib "")
@@ -71,7 +67,7 @@ if(NOT HTSLIB_TARGET)
     "Set both HTSLIB_INCLUDE_DIR and HTSLIB_LIBRARY to use user install."
   )
 endif()
-# --- end deps ---
+# //--- end deps ---//
 
 target_compile_options(pileup-events PRIVATE
     -Wall
