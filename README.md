@@ -21,6 +21,8 @@ or on mac
 Once you have these dependencies, to
 create the pileup-events binary:
 ```bash
+  # git clone <this repo>
+  # cd <repo folder>
   mkdir build
   cd build
   cmake ..
