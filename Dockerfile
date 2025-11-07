@@ -1,20 +1,16 @@
-# Use a slim Ubuntu image
-FROM ubuntu:24.04-slim
+FROM ubuntu:24.04
 
-# Install build tools and libraries
 RUN apt-get update && apt-get install -y \
+    build-essential \
+    git \
     cmake \
     pkg-config \
-    libhts-dev \
-    build-essential
+    libhts-dev
 
-# Set working directory
 WORKDIR /app
 
-# Copy source code
 COPY . .
 
-# Create a build directory and compile using CMake
 RUN cmake -S . -B build \
  && cmake --build build 
 
