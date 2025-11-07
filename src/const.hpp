@@ -31,6 +31,6 @@ inline constexpr uint8_t UNDEFINED_VALUE = UINT8_MAX;
 
 inline constexpr std::string_view VERSION = "0.0.0";
 inline constexpr std::string_view HEADER =
-    "A,T,C,G,-,N,INS,DEL,HEAD,TAIL,QUAL,NREAD,a,t,c,g,_,n,ins,del,head,"
-    "tail,qual,nread";
+    "A,T,C,G,-,N,FINS,FDEL,HEAD,TAIL,QUALSUM,READ,a,t,c,g,_,n,fins,fdel,head,"
+    "tail,qualsum,read";
 

@@ -172,10 +172,10 @@ int main (int argc,
             "  of event counters (see --head) is printed to stdout   "
             "|"
             "\n"
-            "  as a csv. The first 11 columns represent events on    "
+            "  as a csv. The first 12 columns represent events on    "
             "|"
             "\n"
-            "  the forward strand, the next 11 the reverse.          "
+            "  the forward strand, the next 12 the reverse.          "
             "|"
             "\n"
             "                                                        "
@@ -341,6 +341,7 @@ int main (int argc,
         return 1;
     }
 
+    // NOTE: may also want to optionally include rid in output with pos
     try {
         if (print_head) {
             if (print_row)
