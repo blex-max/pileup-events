@@ -65,7 +65,8 @@ No testing on cram has been done as of yet.
 
 ## R & Python Bindings
 
-Bindings for usage of pileup events in both R and Python can be generated during compilation. This is enabled via [SWIG](https://www.swig.org/). As described in the installation section above, python bindings may be created with the `-DMAKE_PY_BINDS=ON` option and R with `-DMAKE_R_BINDS=ON`. Doing so will result in the generation of `build/python` and `build/r` respectively.
+Bindings for usage of pileup events in both R and Python can be generated during compilation. This is enabled via [SWIG](https://www.swig.org/).
+As described in the installation section above, python bindings may be created with the `-DMAKE_PY_BINDS=ON` option and R with `-DMAKE_R_BINDS=ON`. Doing so will result in the generation of `build/python` and `build/r` respectively.
 
 At present bindings are somewhat rudimentary - this may be improved upon in the future. Usage is as follows:
 
@@ -89,7 +90,7 @@ At present bindings are somewhat rudimentary - this may be improved upon in the 
 
 **Python:**
 ```bash
-  # setup
+  # setup in BASH
   pev_bind_path=</path/to/build>/python   # replace between <>
   export PYTHONPATH=${PYTHONPATH}:${pev_bind_path}  # add to python path (not permanent)
 ```
