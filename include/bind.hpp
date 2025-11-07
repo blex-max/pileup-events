@@ -1,14 +1,14 @@
 #include "count.hpp"
 
-std::vector<int> exec_pev (std::string aln_path,
-                           std::string region_str,
-                           bool no_overlaps = false,
-                           int min_mapq = 25,
-                           int min_baseq = 30,
-                           int include_flag = 0,
-                           int exclude_flag = 3844,
-                           int max_depth = 1000000,
-                           int clip_bound = 0) {
+inline std::vector<int> count_events (std::string aln_path,
+                                      std::string region_str,
+                                      bool no_overlaps = false,
+                                      int min_mapq = 25,
+                                      int min_baseq = 30,
+                                      int include_flag = 0,
+                                      int exclude_flag = 3844,
+                                      int max_depth = 1000000,
+                                      int clip_bound = 0) {
     htsFile *aln_in;
     bam_hdr_t *head;
     hts_region reg;

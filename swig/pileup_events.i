@@ -1,7 +1,7 @@
-%module pev_bindings
+%module pileup_events
 
 %{
-#include "wrap.hpp"
+#include "bind.hpp"
 %}
 
 %include "std_string.i"   // <-- add this if wrap.hpp uses std::string
@@ -14,4 +14,4 @@ namespace std {
 }
 
 /* wrap pileup-events */
-%include "wrap.hpp"
+%include "bind.hpp"
