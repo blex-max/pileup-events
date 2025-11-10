@@ -8,7 +8,12 @@
 
 #include "bounds.hpp"
 #include "const.hpp"
-#include "structs.hpp"
+
+struct count_params {
+    int min_baseq, min_mapq, clip_bound, max_depth, include_flag,
+        exclude_flag;
+};
+
 
 // cleave tie to bam pointer
 struct PileupReadInfo {
@@ -96,7 +101,6 @@ inline uint8_t get_pileup_flag (const count_params &params,
 
 struct BaseInfo {
     uint8_t base = UNDEFINED_VALUE;
-    uint8_t base_quality;
     uint8_t flag;
     uint8_t map_quality;
 
@@ -111,7 +115,6 @@ struct BaseInfo {
             input_base = pr.base_nt16i;
         }
         this->base = input_base;
-        this->base_quality = pr.base_q;
         this->flag = pr_flag;
         this->map_quality = pr.map_q;
     }
@@ -127,7 +130,6 @@ inline void base_set (BaseInfo &b,
     b.base = pri.base_nt16i;
     b.flag = get_pileup_flag (params, pri);
     b.map_quality = pri.map_q;
-    b.base_quality = pri.base_q;
 }
 
 
@@ -183,10 +185,23 @@ class AlleleEventCounter {
     void _score_single (const BaseInfo b,
                         const size_t pos_offset) {
         // htslib 4-bit-encoding values
-        constexpr uint8_t base_to_count_field[16] = {
-            FIELD_N, FIELD_A, FIELD_C, FIELD_N, FIELD_G, FIELD_N,
-            FIELD_N, FIELD_N, FIELD_T, FIELD_N, FIELD_N, FIELD_N,
-            FIELD_N, FIELD_N, FIELD_N, FIELD_N};
+        constexpr uint8_t base_to_count_field[16] = {  // this will cause compilation to fail on MSVC
+            FIELD_N,
+            [HTS_NT_A] = FIELD_A,
+            [HTS_NT_C] = FIELD_C,
+            FIELD_N,
+            [HTS_NT_G] = FIELD_G,
+            FIELD_N,
+            FIELD_N,
+            FIELD_N,
+            [HTS_NT_T] = FIELD_T,
+            FIELD_N,
+            FIELD_N,
+            FIELD_N,
+            FIELD_N,
+            FIELD_N,
+            FIELD_N,
+            FIELD_N};
 
         // field accessor that compiler should inline
         constexpr auto make_idx = [] (const size_t block_offset) {

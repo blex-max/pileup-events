@@ -68,7 +68,3 @@ struct hts_region {
     }
 };
 
-struct count_params {
-    int min_baseq, min_mapq, clip_bound, max_depth, include_flag, exclude_flag;
-};
-

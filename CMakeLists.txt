@@ -8,7 +8,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(ENABLE_DEBUG_FLAGS "Enable extra debug compile options" OFF)
 option(MAKE_EXE "Build python bindings via SWIG" OFF)
+option(MAKE_R_BINDS "Build R bindings via SWIG" OFF)
 option(MAKE_PY_BINDS "Build python bindings via SWIG" OFF)
+option(MAKE_TEST "Build testing binary")
 
 # user paths to htslib if needed
 set(HTSLIB_INCLUDE_DIR "" CACHE PATH "Path to directory that contains htslib/hts.h")
@@ -55,6 +57,27 @@ if(NOT HTSLIB_TARGET)
 endif()
 # //--- end deps ---//
 
+if(MAKE_TEST)
+  message(STATUS "Making test binary")
+  Include(FetchContent)
+
+  FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG        v3.8.1
+  )
+
+  FetchContent_MakeAvailable(Catch2)
+
+  add_executable(test-pev tests/test.cpp)
+  target_include_directories(test-pev PRIVATE include)
+  target_link_libraries(test-pev PRIVATE
+    Catch2::Catch2WithMain
+    ${HTSLIB_TARGET}
+  )
+endif(MAKE_TEST)
+
+
 add_library(pev_core INTERFACE)
 target_include_directories(pev_core INTERFACE include)
 
@@ -96,7 +119,6 @@ if(MAKE_EXE)
   # download directly since light, header only
   include(FetchContent)
 
-  message(STATUS "Fetching cxxopts dependency from remote.")
   FetchContent_Declare(
     cxxopts
     GIT_REPOSITORY https://github.com/jarro2783/cxxopts.git
