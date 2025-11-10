@@ -116,7 +116,7 @@ The compiled bindings directories (`python/` and `r/`) can be renamed, and moved
 
 ## Authors & Acknowledgements
 
-`pileup-events` is the work of Alex Byrne & Luca Barbon of CASM Informatics, Wellcome Sanger Institute.
+`pileup-events` is the work of Alex Byrne (alex@blex.bio) & Luca Barbon of CASM Informatics, Wellcome Sanger Institute.
 
 This tool uses [htslib](https://github.com/samtools/htslib) by the samtools team, and [cxxopts](https://github.com/jarro2783/cxxopts) by Jarryd Beck & contributors.
 

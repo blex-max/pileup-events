@@ -1,3 +1,8 @@
+// Copyright 2025 (c) Alex Byrne (alex@blex.bio), Luca Barbon; CASM
+// Informatics, Wellcome Sanger Institute. All rights reserved. Use of
+// this source code is governed by the MIT license that can be found
+// in the LICENSE file.
+
 #pragma once
 
 #include <cstdint>

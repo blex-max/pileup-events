@@ -1,3 +1,8 @@
+// Copyright 2025 (c) Alex Byrne (alex@blex.bio), Luca Barbon; CASM
+// Informatics, Wellcome Sanger Institute. All rights reserved. Use of
+// this source code is governed by the MIT license that can be found
+// in the LICENSE file.
+
 #pragma once
 
 #include <cstdint>
@@ -8,6 +13,10 @@
 
 #include "bounds.hpp"
 #include "const.hpp"
+
+// NOTE: there is definitely room for optimisation here.
+// I haven't profile yet, so it is unknown whether
+// doing so is necessary
 
 struct count_params {
     int min_baseq, min_mapq, clip_bound, max_depth, include_flag,
@@ -185,7 +194,8 @@ class AlleleEventCounter {
     void _score_single (const BaseInfo b,
                         const size_t pos_offset) {
         // htslib 4-bit-encoding values
-        constexpr uint8_t base_to_count_field[16] = {  // this will cause compilation to fail on MSVC
+        constexpr uint8_t base_to_count_field[16] = {
+            // this will cause compilation to fail on MSVC
             FIELD_N,
             [HTS_NT_A] = FIELD_A,
             [HTS_NT_C] = FIELD_C,
