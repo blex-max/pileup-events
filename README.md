@@ -26,11 +26,11 @@ create the pileup-events binary and/or R and python bindings:
   # cd <repo folder>
   mkdir build
   cd build
-  cmake ..
-  cmake --build . \
+  cmake .. \
     -DMAKE_EXE=ON \ # create binary
-    -DMAKE_PY_BINDS \ # make python bindings
-    -DMAKE_R_BINDS # R
+    -DMAKE_PY_BINDS=ON \ # make python bindings
+    -DMAKE_R_BINDS=ON # R
+  cmake --build .
 ```
 
 You can then invoke the binary like `./path/to/pileup-events --help`.
