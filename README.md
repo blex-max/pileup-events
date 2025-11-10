@@ -65,7 +65,7 @@ No testing on cram has been done as of yet.
 
 ## R & Python Bindings
 
-Bindings for usage of pileup events in both R and Python can be generated during compilation. This is enabled via [SWIG](https://www.swig.org/).
+Bindings for usage of pileup events in both R and Python can be generated during compilation. This is enabled by [SWIG](https://www.swig.org/).
 As described in the installation section above, python bindings may be created with the `-DMAKE_PY_BINDS=ON` option and R with `-DMAKE_R_BINDS=ON`. Doing so will result in the generation of `build/python` and `build/r` respectively.
 
 At present bindings are somewhat rudimentary - this may be improved upon in the future. Usage is as follows:
@@ -114,11 +114,24 @@ In either case the return value of the count events function is a 1D vector, whe
 
 The compiled bindings directories (`python/` and `r/`) can be renamed, and moved anywhere appropriate on the system. They are not dependent on other build artefacts. Do not modify or rename any of the files within these directories. Note that for the python bindings if you do move/rename the `python/` directory you will need to add the new location to PYTHONPATH.
 
+## Development and Testing
+
+To enable compliation with debug flags and compilation of the test binary, add the following options to the `cmake ..` step:
+
+```bash
+  cmake .. \
+    -DENABLE_DEBUG_FLAGS=ON \
+    -DMAKE_TEST=ON # \
+    # other options
+```
+
+Compliation of the test binary will produce an additional artefact, `build/test-pev`. Execution of this artefact will run the test suite. The test suite is currently quite brief, and may be expanded upon in the future.
+
 ## Authors & Acknowledgements
 
 `pileup-events` is the work of Alex Byrne (alex@blex.bio) & Luca Barbon of CASM Informatics, Wellcome Sanger Institute.
 
-This tool uses [htslib](https://github.com/samtools/htslib) by the samtools team, and [cxxopts](https://github.com/jarro2783/cxxopts) by Jarryd Beck & contributors.
+This tool uses [htslib](https://github.com/samtools/htslib) for accessing sequence data, and [cxxopts](https://github.com/jarro2783/cxxopts) for the CLI interface. Testing is made using [Catch2](https://github.com/catchorg/Catch2)
 
 <!-- NOTE: I will add that is an upgrade over the original having proved it actually works under load! -->
 The function of the tool is to provide an standalone version of the `bam2R()` functionality found in the R package [deepSNV](https://github.com/gerstung-lab/deepSNV). It is a complete rewrite of the concepts found therein.
