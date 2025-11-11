@@ -4,6 +4,7 @@
 #include "bind.hpp"
 %}
 
+%include "std_string.i"  // unclear why this is needed, but crashes without
 %include "std_vector.i"
 
 /* tell SWIG how to convert std::vector<int> */
