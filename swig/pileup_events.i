@@ -4,8 +4,8 @@
 #include "bind.hpp"
 %}
 
-%include "std_string.i"  // unclear why this is needed, but crashes without
-%include "std_vector.i"
+%include "std_string.i"  // for parameters to count_events
+%include "std_vector.i"  // for result of count_events
 
 /* tell SWIG how to convert std::vector<int> */
 %include "std_vector.i"
