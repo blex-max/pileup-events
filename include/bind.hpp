@@ -6,6 +6,8 @@
 #pragma once
 
 #include "count.hpp"
+#include <htslib/hts.h>
+#include <htslib/sam.h>
 
 inline std::vector<int> count_events (std::string aln_path,
                                       std::string region_str,
@@ -81,6 +83,10 @@ inline std::vector<int> count_events (std::string aln_path,
         throw std::runtime_error ("Error during calculation: " +
                                   std::to_string (*e.what()));
     }
+
+    hts_close (aln_in);
+    bam_hdr_destroy (head);
+    hts_idx_destroy (idx);
 
     return result;
 }

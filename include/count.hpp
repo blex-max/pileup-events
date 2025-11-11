@@ -48,7 +48,6 @@ inline void count (htsFile *aln_fh,
                    const count_params params) {
     bam_plp_t buf = NULL;
     bam1_t *b = NULL;
-    bam_hdr_t *head = NULL;
 
     safe_size_opts sso_plp_pos;
     sso_plp_pos.msg = "error translating htslib pileup position into "
@@ -85,6 +84,5 @@ inline void count (htsFile *aln_fh,
 
     sam_itr_destroy (iter);
     bam_destroy1 (b);
-    bam_hdr_destroy (head);
     bam_plp_destroy (buf);
 }
