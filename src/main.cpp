@@ -293,5 +293,9 @@ int main (int argc,
         return 1;
     }
 
+    hts_close (aln_in);
+    bam_hdr_destroy (head);
+    hts_idx_destroy (idx);
+
     return 0;
 }
