@@ -58,7 +58,7 @@ endif()
 # //--- end deps ---//
 
 if(MAKE_TEST)
-  message(STATUS "Making test binary")
+  message(STATUS "Fetching Catch2 for test binary")
   Include(FetchContent)
 
   FetchContent_Declare(
@@ -97,12 +97,12 @@ if(ENABLE_DEBUG_FLAGS)
       -Wdouble-promotion
       -Wformat=2
   )
-  target_compile_options(pev_core PRIVATE
+  target_compile_options(pev_core INTERFACE
     -fsanitize=address,undefined
     -fno-omit-frame-pointer
     -O0 -g
   )
-  target_link_options(pev_core PRIVATE
+  target_link_options(pev_core INTERFACE
     -fsanitize=address,undefined
   )
 endif()

@@ -4,6 +4,8 @@ Count alleles and alignment events per position for a specified genomic region.
 
 ## Installation
 
+### Minimal
+
 You will need `cmake>=3.16` and `htslib>=1.14` installed,
 and preferably `pkg-config` if you want to install
 the easy way. If you want to create python and/or R
@@ -37,10 +39,66 @@ You can then invoke the binary like `./path/to/pileup-events --help`.
 Add the binary path to PATH to be able to call `pileup-events` from anywhere.
 For usage of the R and python bindings see subsequent sections.
 
+### Extended 
+It is possible to direct cmake to use specific
+builds of `htslib` via the `-DHTS_INCLUDE_DIR` and `-DHTS_LIBRARY`
+options to `cmake ..`.
+
+pileup-events relies on `cxxopts` for the CLI interface,
+and `Catch2` if building the test binary. These dependencies
+will be fetched automatically during the build process.
+
+
 ## Usage
 
-See `pileup-events --help`.
-Then pick a location to investigate,
+`pileup-events --help`:
+```
+-----pileup-events:-------------------------------------|
+                                                        |
+  Count alleles and alignment events per position for   |
+  a specified genomic region.                           |
+                                                        |
+   -----------                                          |
+                                                        |
+  Where reference names contain colons, surround in     |
+  curly braces like {HLA-DRB1*12:17}:<start>{-<end>}.   |
+                                                        |
+  chr1:100 is treated as the single base pair region    |
+  chr1:100-100. chr1:-100 is shorthand for chr1:1-100   |
+  and chr1:100- is ch1:100-<end>. All co-ordinates are  |
+  1-based, end-inclusive; i.e. as reported in a VCF.    |
+                                                        |
+  A result matrix with end-start rows and 22 columns    |
+  of event counters (see --head) is printed to stdout   |
+  as a csv. The first 12 columns represent events on    |
+  the forward strand, the next 12 the reverse.          |
+                                                        |
+--------------------------------------------------------|
+
+Usage:
+  pileup-events [OPTION...] <.BAM/.CRAM> chr:start-end
+
+  -b, --baseq arg         Minimum base quality to treat base as
+                          unambiguous. (default 30)
+  -m, --mapq arg          Minimum mapping quality to include read (default
+                          25)
+  -c, --clip arg          Treat bases within <clip> bases of read edges as
+                          ambiguous. (default 0)
+  -i, --include arg       Include only reads with all bits set in sam flag.
+                          Provide flag as integer. (default 0)
+  -e, --exclude arg       Exclude reads with any bits set in sam flag.
+                          Provide flag as integer. (default 3844)
+  -d, --depth arg         Maximum read depth (default 1000000)
+      --head              Print header
+      --row               Print genomic position index for each row
+      --discard-overlaps  Avoid double counting of bases from the same
+                          template
+  -h, --help              Print usage
+      --version           Print program version
+
+```
+
+Pick a location to investigate,
 for example a variant from a VCF or a region from a BED file,
 and run on that location to see the event counts.
 
@@ -62,6 +120,10 @@ for a single location. See the helptext for more details.
 Assuming compilation against a recent version of htslib,
 both .bam and .cram are in principle supported.
 No testing on cram has been done as of yet.
+
+<!-- TODO: comparison to deepsnv re overlaps -->
+
+<!-- TODO: summarise outputs -->
 
 ## R & Python Bindings
 

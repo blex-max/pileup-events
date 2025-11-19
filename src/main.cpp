@@ -24,21 +24,16 @@ int main (int argc,
 
     fs::path aln_path;
     std::string region_str;
-    htsFile *aln_in;
-    bam_hdr_t *head;
-    hts_region reg;
     count_params cp;
-
-    // defaults
-    bool print_head = false;
-    bool print_row = false;
-    bool no_overlaps = false;
     cp.min_mapq = 25;
     cp.min_baseq = 30;
     cp.include_flag = 0;
     cp.exclude_flag = 3844;
     cp.max_depth = 1000000;
     cp.clip_bound = 0;
+    bool print_head = false;
+    bool print_row = false;
+    bool no_overlaps = false;
 
     try {
         cxxopts::Options options (
@@ -202,12 +197,19 @@ int main (int argc,
         return 1;
     }
 
-    hts_idx_t *idx;
+    htsFile *aln_in=nullptr;
+    bam_hdr_t *head=nullptr;
+    hts_region reg;
+    hts_idx_t *idx=nullptr;
     int tid = -3;
     int64_t start, end;
     std::vector<int> result;
     try {
         aln_in = hts_open (aln_path.c_str(), "r");
+        if (aln_in == NULL) {
+            throw std::runtime_error (
+                "failed to read alignment file");
+        }
         head = sam_hdr_read (aln_in);
         if (head == NULL) {
             throw std::runtime_error (
@@ -238,7 +240,7 @@ int main (int argc,
         reg = hts_region::by_end (tid, start, end);
 
         idx = sam_index_load (aln_in, aln_path.c_str());
-        if (!idx) {
+        if (idx == NULL) {
             throw std::runtime_error ("failed to load index file");
         }
 

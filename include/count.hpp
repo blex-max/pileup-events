@@ -12,9 +12,9 @@
 // nothing but C please
 extern "C" {
 struct pf_capture {
-    htsFile *fh;
-    hts_itr_t *it;
-    const count_params *p;
+    htsFile *fh = NULL; // since nullptr is c++
+    hts_itr_t *it = NULL;
+    const count_params *p = NULL;
 };
 inline int pileup_func (void *data,
                         bam1_t *b) {
@@ -46,8 +46,8 @@ inline void count (htsFile *aln_fh,
                    AlleleEventCounter ctr,
                    const hts_region reg,
                    const count_params params) {
-    bam_plp_t buf = NULL;
-    bam1_t *b = NULL;
+    bam_plp_t buf = nullptr;
+    bam1_t *b = nullptr;
 
     safe_size_opts sso_plp_pos;
     sso_plp_pos.msg = "error translating htslib pileup position into "
@@ -68,7 +68,7 @@ inline void count (htsFile *aln_fh,
 
     int64_t plp_pos = -1;
     int plp_tid = -1, n_plp = -1;
-    const bam_pileup1_t *pl;
+    const bam_pileup1_t *pl = nullptr;
     size_t pos_offset;
     while ((pl = bam_plp64_auto (buf, &plp_tid, &plp_pos, &n_plp)) !=
            0) {

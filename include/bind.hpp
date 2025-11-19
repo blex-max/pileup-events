@@ -18,13 +18,13 @@ inline std::vector<int> count_events (std::string aln_path,
                                       int exclude_flag = 3844,
                                       int max_depth = 1000000,
                                       int clip_bound = 0) {
-    htsFile *aln_in;
-    bam_hdr_t *head;
+    htsFile *aln_in=nullptr;
+    bam_hdr_t *head=nullptr;
     hts_region reg;
     count_params cp{min_baseq, min_mapq,     clip_bound,
                     max_depth, include_flag, exclude_flag};
 
-    hts_idx_t *idx;
+    hts_idx_t *idx=nullptr;
     int tid = -3;
     int64_t start, end;
     std::vector<int> result;
@@ -60,7 +60,7 @@ inline std::vector<int> count_events (std::string aln_path,
         reg = hts_region::by_end (tid, start, end);
 
         idx = sam_index_load (aln_in, aln_path.c_str());
-        if (!idx) {
+        if (idx == NULL) {
             throw std::runtime_error ("failed to load index file");
         }
 
