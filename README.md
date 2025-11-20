@@ -114,6 +114,9 @@ e.g.:
     chr1:1000-2000  # 1001bp range
 ```
 
+The output is a comma separated matrix printed to stdout.
+To direct the ouput to a file do `pileup-events ... > results.csv`
+
 The region string is 1-indexed, end-inclusive, i.e. identical to `samtools view` -
 excepting the fact that `pileup-events` allows a series of shorthands such as `<chr>:<pos>` 
 for a single location. See the helptext for more details.
@@ -121,9 +124,21 @@ Assuming compilation against a recent version of htslib,
 both .bam and .cram are in principle supported.
 No testing on cram has been done as of yet.
 
-<!-- TODO: comparison to deepsnv re overlaps -->
+## Output
 
-<!-- TODO: summarise outputs -->
+The output is a Nx24 matrix where N is the number of positions examined. 12 fields are detailed for each strand. if using the `--head` flag the output would be printed as below
+
+| A | T | C | G | - | N | FINS | FDEL | HEAD | TAIL | QUALSUM | READ | a | t | c | g | _ | n | fins | fdel | head | tail | qualsum | read |
+|---|---|---|---|---|---|------|------|------|------|---------|------|---|---|---|---|---|---|------|------|------|------|---------|------|
+| ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
+
+Examining the results for the forward strand, for each position, the first 4 fields are the counts of each canoncial base, the 5th field `-` of deleted bases, and the 6th `N` of ambiguous bases. `FINS` and `FDEL` are the count of bases followed by an insertion or deletion respectively. `HEAD` and `TAIL` is the count of bases which occur at the first or last position of a query sequence, `QUALSUM` is the sum of all mapping qualities, and `READ` is the total number of reads/bases covering that position. The same is true of the reverse strand, where the headings are lowercase to differentiate.
+
+For users of deepSNV, the `READ` field is a new addition as compared to `bam2R()`, and may need to be accounted for in code which relied on `bam2R()`.
+
+Note that the `--pos` flag can optionally be used to print genomic positions as row indexes. 
+
+<!-- TODO: comparison to deepsnv re overlaps -->
 
 ## R & Python Bindings
 
