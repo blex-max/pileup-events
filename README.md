@@ -155,7 +155,7 @@ At present bindings are somewhat rudimentary - this may be improved upon in the 
   count_events(
     "absolute/path/to/bam",
     "chrX:150"
-    # no_overlaps=False,  # optional parameters with default values
+    # no_overlaps=FALSE,  # optional parameters with default values
     # min_mapq=25,
     # min_baseq=30,
     # include_flag=0,
@@ -164,12 +164,14 @@ At present bindings are somewhat rudimentary - this may be improved upon in the 
     # clip_bound=0
   )
 ```
+Note that at present the R call does not allow arguments to be out of order. You will need to provide arguments for all parameters up to the last parameter in the list that you need to modify.
+
 
 **Python:**
 ```bash
   # setup in BASH
   pev_bind_path=</path/to/build>/python   # replace between <>
-  export PYTHONPATH=${PYTHONPATH}:${pev_bind_path}  # add to python path (not permanent)
+  export PYTHONPATH=${PYTHONPATH}:${pev_bind_path}  # add to python path (not permanent unless in e.g. .bashrc)
 ```
 ```python
   import pileup_events as pev
