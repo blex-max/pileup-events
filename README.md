@@ -51,7 +51,7 @@ will be fetched automatically during the build process.
 
 ## Usage
 
-`pileup-events --help`:
+`pileup-events --help`
 ```
 -----pileup-events:-------------------------------------|
                                                         |
@@ -189,7 +189,7 @@ At present bindings are somewhat rudimentary - this may be improved upon in the 
 
 In either case the return value of the count events function is a 1D vector, where each of the genomic positions counted is a block of 24 cells in the vector. It is currently left to the user to transform this strucutre into any desirable alternative.
 
-The compiled bindings directories (`python/` and `r/`) can be renamed, and moved anywhere appropriate on the system. They are not dependent on other build artefacts. Do not modify or rename any of the files within these directories. Note that for the python bindings if you do move/rename the `python/` directory you will need to add the new location to PYTHONPATH.
+The compiled bindings directories (`python/` and `r/`) can be renamed, and moved anywhere appropriate on the system. They are not dependent on other build artefacts. Do not modify or rename any of the files within these directories. Note that for the python bindings if you do move/rename the `python/` directory you will need to add the new location to `PYTHONPATH`.
 
 ## Development & Testing
 
