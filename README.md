@@ -208,7 +208,7 @@ Compliation of the test binary will produce an additional artefact, `build/test-
 
 ## Authors & Acknowledgements
 
-`pileup-events` is the work of Alex Byrne (alex@blex.bio) & Luca Barbon of CASM Informatics, Wellcome Sanger Institute.
+`pileup-events` is the work of Alex Byrne & Luca Barbon of CASM Informatics, Wellcome Sanger Institute.
 
 This tool uses [htslib](https://github.com/samtools/htslib) for accessing sequence data, and [cxxopts](https://github.com/jarro2783/cxxopts) for the CLI interface. Testing is made using [Catch2](https://github.com/catchorg/Catch2)
 
